@@ -1,0 +1,25 @@
+version: "3.9"
+services:
+  keycloak:
+    image: jboss/keycloak:14.0.0
+    networks:
+      - internal
+    ports:
+      - 6011:8080
+    environment:
+      - DB_VENDOR=h2
+      - KEYCLOAK_FRONTEND_URL=http://localhost:6011/auth
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=12345
+  vault:
+    image: hashicorp/vault:latest
+    networks:
+      - internal
+    cap_add:
+      - IPC_LOCK
+    ports:
+      - 8200:8200
+    environment:
+      - VAULT_DEV_ROOT_TOKEN_ID=root
+networks:
+  ? internal
