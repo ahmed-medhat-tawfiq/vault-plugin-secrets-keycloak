@@ -18,8 +18,12 @@ services:
     cap_add:
       - IPC_LOCK
     ports:
-      - 8200:8200
+      - "8200:8200"
     environment:
       - VAULT_DEV_ROOT_TOKEN_ID=root
+    volumes:
+      - ./vault.hcl:/vault/config/vault.hcl  # Mount the custom configuration file
+      - ./vault/plugins/vault-plugin-secrets-keycloak:/vault/plugins/keycloak-client-secrets  # Mount your plugin directory
+      # - ./vault/plugins/vault-plugin-secrets-keycloak_v0.5.0:/vault/plugins/keycloak-client-secrets
 networks:
-  ? internal
+  internal:
