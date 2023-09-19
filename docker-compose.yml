@@ -23,7 +23,7 @@ services:
       - VAULT_DEV_ROOT_TOKEN_ID=root
     volumes:
       - ./vault.hcl:/vault/config/vault.hcl  # Mount the custom configuration file
-      - ./vault/plugins/vault-plugin-secrets-keycloak_v0.6.0:/vault/plugins/keycloak-client-secrets  # Mount your plugin directory
+      - ./vault/plugins/:/vault/plugins/  # Mount your plugin directory
       # - ./vault/plugins/vault-plugin-secrets-keycloak_v0.5.0:/vault/plugins/keycloak-client-secrets
 networks:
   internal:
