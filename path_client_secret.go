@@ -70,6 +70,93 @@ func pathClientSecret(b *backend) *framework.Path {
 		},
 	}
 }
+
+func pathClientToken(b *backend) *framework.Path {
+	return &framework.Path{
+		Pattern: "clients/" + framework.GenericNameRegex("clientId") + "/token",
+		Fields: map[string]*framework.FieldSchema{
+			"clientId": {
+				Type:        framework.TypeString,
+				Description: "Name of the client.",
+			},
+		},
+
+		Callbacks: map[logical.Operation]framework.OperationFunc{
+			logical.ReadOperation: b.pathClientSecretRead,
+		},
+	}
+}
+
+func (b *backend) pathClientTokenRead(ctx context.Context, req *logical.Request, d *framework.FieldData) (*logical.Response, error) {
+	clientId := d.Get("clientId").(string)
+	if clientId == "" {
+		return logical.ErrorResponse("missing client"), nil
+	}
+
+	config, err := readConfig(ctx, req.Storage)
+
+	if err != nil {
+		return logical.ErrorResponse("failed to read config"), err
+	}
+
+	token, err := b.readClientToken(ctx, config.Realm, clientId, config)
+	if err != nil {
+		return logical.ErrorResponse("could not retrieve client secret"), err
+	}
+
+	// Generate the response
+	response := &logical.Response{
+		Data: map[string]interface{}{
+			"client_id": clientId,
+			"token":     token,
+		},
+	}
+
+	return response, nil
+}
+
+func (b *backend) readClientToken(ctx context.Context, realm string, clientId string, config ConnectionConfig) (string, error) {
+
+	goclaokClient, token, err := b.getClientAndAccessToken(ctx, config)
+
+	if err != nil {
+		return "", err
+	}
+
+	clients, err := goclaokClient.GetClients(ctx, token.AccessToken, realm, gocloak.GetClientsParams{
+		ClientID: &clientId,
+	})
+	if err != nil {
+		return "", err
+	}
+	if len(clients) != 1 {
+		return "", fmt.Errorf("found %d clients for %s", len(clients), clientId)
+	}
+
+	client := clients[0]
+
+	creds, err := goclaokClient.GetClientSecret(ctx, token.AccessToken, realm, *client.ID)
+
+	if err != nil {
+		return "", err
+	}
+
+	var clientConfig = ConnectionConfig{
+		ClientId:     clientId,
+		ClientSecret: *creds.Value,
+		Realm:        realm,
+		ServerUrl:    config.ServerUrl,
+	}
+
+	_, clientToken, err := b.getClientAndAccessToken(ctx, clientConfig)
+
+	if err != nil {
+		return "", err
+	}
+
+	return clientToken.AccessToken, nil
+}
+
 func (b *backend) pathClientSecretRead(ctx context.Context, req *logical.Request, d *framework.FieldData) (*logical.Response, error) {
 	clientId := d.Get("clientId").(string)
 	if clientId == "" {

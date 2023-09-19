@@ -11,13 +11,13 @@ Unzip the release file and copy the plugin binary into the vault plugin folder:
 
 ```
 unzip vault-plugin-secrets-keycloak_0.4.0_linux_amd64.zip
-cp vault-plugin-secrets-keycloak_v0.4.0 /etc/vault/plugin/keycloak-client-secrets
+cp vault-plugin-secrets-keycloak_v0.5.0 /etc/vault/plugin/keycloak-client-secrets
 ```
 
 Then register the plugin:
 
 ```
-vault plugin register -sha256=<checksum of the plugin binary> secret keycloak-client-secrets
+vault plugin register -sha256=2f20efb3f02702a24b56488eb5325ffbc6d434a4869dd25e86c32400262562d4 secret keycloak-client-secrets
 ```
 
 Now, the plugin can be used in Vault.
@@ -133,7 +133,7 @@ issuer           https://auth.example.org/auth/realms/master
 ## Test Run
 
 ```bash
-export VAULT_ADDR="http://127.0.0.1:8200
+export VAULT_ADDR="http://localhost:8200"
 ```
 
 ```bash
