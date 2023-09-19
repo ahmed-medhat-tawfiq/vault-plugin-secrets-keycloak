@@ -5,148 +5,66 @@ The purpose of this plugin is to provide Keycloak client secrets from Vault.
 
 Please read the [Vault Plugin](https://www.vaultproject.io/docs/plugins) documentation for how to enable and handle plugins in Vault.
 
-### Register plugin
+### Register plugin for Dev Mode
 
-Unzip the release file and copy the plugin binary into the vault plugin folder:
-
-```
-unzip vault-plugin-secrets-keycloak_0.4.0_linux_amd64.zip
-cp vault-plugin-secrets-keycloak_v0.5.0 /etc/vault/plugin/keycloak-client-secrets
-```
-
-Then register the plugin:
+- Clone this repository:
 
 ```
-vault plugin register -sha256=2f20efb3f02702a24b56488eb5325ffbc6d434a4869dd25e86c32400262562d4 secret keycloak-client-secrets
+git clone git@github.com:ahmed-medhat-tawfiq/vault-plugin-secrets-keycloak.git
+```
+
+- Download Release:
+
+Go to https://github.com/ahmed-medhat-tawfiq/vault-plugin-secrets-keycloak/releases and download the latest release in the repo root directory.
+
+
+- Unzip the release file and copy the plugin binary into the vault plugin folder:
+
+```
+unzip vault-plugin-secrets-keycloak_x.x.x_linux_amd64.zip
+cp ./vault-plugin-secrets-keycloak_v0.6.0 ./vault/plugins/keycloak-client-secrets
+chmod +x ./vault/plugins/keycloak-client-secrets
+```
+
+
+- Generate the sha256 checksum of the plugin:
+
+```
+sha256sum ./vault/plugins/keycloak-client-secrets
+```
+
+- Run vault and keycloak:
+
+```
+docker-compose up -d
+```
+
+NOTE:
+  - vault token is `root` http://localhost:8200
+  - keycloak admin username is `admin` and password is `12345` http://localhost:6011/auth
+
+
+- Then register the plugin using the hash generated from the previous step:
+
+```
+curl --location --request POST 'http://localhost:8200/v1/sys/plugins/catalog/secret/keycloak-client-secrets' \
+--header 'X-Vault-Token: root' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "sha256": "<hash>", //add the generated hash here i.e. 56de501d037ebe7020d819a41f39f4ef5be5e85430f34865a667b2bb5a454ad2
+  "command": "keycloak-client-secrets",
+  "type": "secret",
+  "version": "1"
+}'
+```
+
+- Mount the plugin:
+
+```
+curl --location --request POST 'http://localhost:8200/v1/sys/mounts/keycloak-client-secrets' \
+--header 'X-Vault-Token: root' \
+--header 'Content-Type: application/json' \
+--data-raw '{"type": "keycloak-client-secrets"}'
 ```
 
 Now, the plugin can be used in Vault.
-
-### Mount backend
-
-Next, you have to mount a _keycloak-client-secrets_ backend. Do this either by command line:
-
-```
-vault secrets enable --path=keycloak-client-secrets keycloak-client-secrets
-```
-
-or with Terraform:
-
-```
-resource "vault_mount" "keycloak-client-secrets" {
-  type        = "keycloak-client-secrets"
-  path        = "keycloak-client-secrets"
-}
-```
-
-### Create client
-
-Create a client in Keycloak which should be used by vault to access the client secrets. You can use our 
-[Terraform plugin](https://registry.terraform.io/modules/Serviceware/keycloak-client/vaultkeycloak/latst) to this:
-
-```
-provider "keycloak" {
-  url       = "https://auth.example.org/auth"
-  client_id = "admin-cli"
-}
-
-module "keycloak_vault_config" {
-  source          = "Serviceware/keycloak-client/vaultkeycloak"
-  version         = "0.1.2"
-  realm           = "master"
-  vault_client_id = "vault"
-}
-```
-
-The plugin takes the credentials from the Keycloak provider. 
-
-### Default Configure connection
-
-Now, you can register a connection to Keycloak with:
-
-```
-vault write keycloak-client-secrets/config/connection \
-    server_url="https://auth.example.org/auth" \
-    realm="master" \
-    client_id="vault" \
-    client_secret="secr3t"
-```
-
-or by using our [vaultkeycloak](https://registry.terraform.io/providers/Serviceware/vaultkeycloak/latest) Terraform provider:
-
-```
-resource "vaultkeycloak_secret_backend" "keycloak-client-secrets-config" {
-  path = "keycloak-client-secrets"
-  
-  server_url    = "https://auth.example.org/auth"
-  realm         = "master"
-  client_id     = "vault"
-  client_secret = "secr3t"
-}
-```
-
-The client secret is taken from the credentials tab of the client configuration in Keycloak.
-
-### Configure connection for specific realm
-```
-vault write keycloak-client-secrets/config/realms/realm123/connection \
-    server_url="https://auth.example.org/auth" \
-    client_id="vault" \
-    client_secret="secr3t"
-```
-
-
-### Read client secret of "default" realm
-
-Assuming, you have a client _my-client_ in Keycloak you can finally read the client secret with:
-
-```
-vault read keycloak-client-secrets/clients/my-client/secret
-```
-
-The output looks like this:
-
-```
-Key              Value
----              -----
-client_secret    some-very-secret-value
-client_id        my-client
-issuer           https://auth.example.org/auth/realms/master
-```
-
-### Read client secret of specific realm
-
-```
-vault read keycloak-client-secrets/realms/my-realm/clients/my-client/secret
-```
-
-The output looks like this:
-
-```
-Key              Value
----              -----
-client_secret    some-very-secret-value
-client_id        my-client
-issuer           https://auth.example.org/auth/realms/master
-```
-
-## Test Run
-
-```bash
-export VAULT_ADDR="http://localhost:8200"
-```
-
-```bash
-make build && make start
-```
-
-```
-make enable
-vault write keycloak/config/connection \
-    server_url="http://localhost:8080/auth" \
-    realm="master" \
-    client_id="vault" \
-    client_secret="sec3t"
-
-vault read keycloak/clients/foo/secret
-```
