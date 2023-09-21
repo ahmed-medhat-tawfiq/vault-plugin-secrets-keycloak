@@ -1,0 +1,372 @@
+{
+	"info": {
+		"_postman_id": "3ae5fabc-92a2-4e44-9276-8e8b81b12004",
+		"name": "Vault-Plugins",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Register the Plugin",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8,ar;q=0.7"
+					},
+					{
+						"key": "Cache-Control",
+						"value": "max-age=0"
+					},
+					{
+						"key": "Connection",
+						"value": "keep-alive"
+					},
+					{
+						"key": "Sec-Fetch-Dest",
+						"value": "document"
+					},
+					{
+						"key": "Sec-Fetch-Mode",
+						"value": "navigate"
+					},
+					{
+						"key": "Sec-Fetch-Site",
+						"value": "none"
+					},
+					{
+						"key": "Sec-Fetch-User",
+						"value": "?1"
+					},
+					{
+						"key": "Upgrade-Insecure-Requests",
+						"value": "1"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Chromium\";v=\"116\", \"Not)A;Brand\";v=\"24\", \"Google Chrome\";v=\"116\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Windows\""
+					},
+					{
+						"key": "X-Vault-Token",
+						"value": "root",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"sha256\": \"<hash>\", //add the generated hash here i.e. 56de501d037ebe7020d819a41f39f4ef5be5e85430f34865a667b2bb5a454ad2\r\n  \"command\": \"keycloak-client-secrets\",\r\n  \"type\": \"secret\",\r\n  \"version\": \"1\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8200/v1/sys/plugins/catalog/secret/keycloak-client-secrets"
+			},
+			"response": []
+		},
+		{
+			"name": "Create Secret Engine",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Vault-Token",
+						"value": "root"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"type\": \"keycloak-client-secrets\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8200/v1/sys/mounts/keycloak-client-secrets"
+			},
+			"response": []
+		},
+		{
+			"name": "List All Plugins",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8,ar;q=0.7"
+					},
+					{
+						"key": "Cache-Control",
+						"value": "max-age=0"
+					},
+					{
+						"key": "Connection",
+						"value": "keep-alive"
+					},
+					{
+						"key": "Sec-Fetch-Dest",
+						"value": "document"
+					},
+					{
+						"key": "Sec-Fetch-Mode",
+						"value": "navigate"
+					},
+					{
+						"key": "Sec-Fetch-Site",
+						"value": "none"
+					},
+					{
+						"key": "Sec-Fetch-User",
+						"value": "?1"
+					},
+					{
+						"key": "Upgrade-Insecure-Requests",
+						"value": "1"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Chromium\";v=\"116\", \"Not)A;Brand\";v=\"24\", \"Google Chrome\";v=\"116\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Windows\""
+					},
+					{
+						"key": "X-Vault-Token",
+						"value": "root",
+						"type": "text"
+					}
+				],
+				"url": "http://localhost:8200/v1/sys/plugins/catalog"
+			},
+			"response": []
+		},
+		{
+			"name": "Read Plugin",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Vault-Token",
+						"value": "root"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8200/v1/sys/plugins/catalog/secret/keycloak-client-secrets?version=v1.0.0",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8200",
+					"path": [
+						"v1",
+						"sys",
+						"plugins",
+						"catalog",
+						"secret",
+						"keycloak-client-secrets"
+					],
+					"query": [
+						{
+							"key": "version",
+							"value": "v1.0.0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[Master] Connections",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "X-Vault-Token",
+						"value": "root"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"server_url\": \"http://keycloak:8080/auth\",\r\n    \"realm\": \"master\",\r\n    \"client_id\": \"vault\",\r\n    \"client_secret\": \"318cf0b2-50b0-4518-81e5-2509bbb2ac3f\"\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8200/v1/keycloak-client-secrets/config/connection"
+			},
+			"response": []
+		},
+		{
+			"name": "[Master] Read Client Secrets",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Vault-Token",
+						"value": "root"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8200/v1/keycloak-client-secrets/clients/test/secret"
+			},
+			"response": []
+		},
+		{
+			"name": "[Master] Read Client Token",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Vault-Token",
+						"value": "root"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8200/v1/keycloak-client-secrets/clients/test/token"
+			},
+			"response": []
+		},
+		{
+			"name": "[Tenant] Connections",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "X-Vault-Token",
+						"value": "root"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"server_url\": \"http://keycloak:8080/auth\",\r\n    \"realm\": \"bestrealm\",\r\n    \"client_id\": \"vault\",\r\n    \"client_secret\": \"b8978299-4c63-4f65-a1b1-98f03a8c6ff8\"\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8200/v1/keycloak-client-secrets/config/connection"
+			},
+			"response": []
+		},
+		{
+			"name": "[Tenant] Read Client Secrets",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Vault-Token",
+						"value": "root"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8200/v1/keycloak-client-secrets/realms/bestrealm/clients/test/secret"
+			},
+			"response": []
+		},
+		{
+			"name": "[Tenant] Read Client Token",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Vault-Token",
+						"value": "root"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8200/v1/keycloak-client-secrets/realms/bestrealm/clients/test/token"
+			},
+			"response": []
+		}
+	]
+}
