@@ -1,6 +1,6 @@
-# Keycloak Secrets via Vault
+# Keycloak Secrets in Vault
 
-The purpose of this plugin is to provide Keycloak client secrets from Vault. 
+The purpose of this plugin is to provide Keycloak confidential client (secrets and JWT tokens) from Vault. 
 
 Please read the [Vault Plugin](https://www.vaultproject.io/docs/plugins) documentation for how to enable and handle plugins in Vault.
 
@@ -151,3 +151,49 @@ curl --location --request GET 'http://localhost:8200/v1/keycloak-client-secrets/
 ```
 
 
+## Production Setup
+
+
+- Download Release:
+
+Go to https://github.com/ahmed-medhat-tawfiq/vault-plugin-secrets-keycloak/releases.
+
+
+- Unzip the release file and copy the plugin binary:
+
+```
+unzip vault-plugin-secrets-keycloak_0.7.0_linux_amd64.zip
+cp ./vault-plugin-secrets-keycloak_v0.7.0 ./keycloak-client-secrets
+chmod +x ./vault/plugins/keycloak-client-secrets
+```
+
+
+- Generate the sha256 checksum of the plugin:
+
+```
+sha256sum ./keycloak-client-secrets
+```
+
+- mount the plugin (binary file) in vault https://developer.hashicorp.com/vault/docs/plugins/plugin-management 
+
+- register the plugin using the hash generated from the previous step using the vault CLI:
+
+```
+vault plugin register -sha256=<checksum of the plugin binary> secret keycloak-client-secrets
+```
+
+- mount the plugin in vault to create a secrets engine:
+
+
+```
+vault secrets enable --path=keycloak-client-secrets keycloak-client-secrets
+```
+
+- configure the plugin connection:
+  
+   Same curl as in `dev setup` [master-realm](#master-realm) or [per-realm](#per-realm)
+
+
+## Thanks
+
+This project is forked from https://github.com/Serviceware/vault-plugin-secrets-keycloak and modified to support keycloak JWT tokens.

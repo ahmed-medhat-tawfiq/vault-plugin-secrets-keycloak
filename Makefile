@@ -17,12 +17,6 @@ all: fmt build start
 build:
 	GOOS=$(OS) GOARCH="$(GOARCH)" go build -o vault/plugins/vault-plugin-secrets-keycloak cmd/vault-plugin-secrets-keycloak/main.go
 
-start:
-	vault server -dev -dev-root-token-id=root -dev-plugin-dir=./vault/plugins
-
-enable:
-	vault secrets enable -path=keycloak-secrets vault-plugin-secrets-keycloak
-
 clean:
 	rm -f ./vault/plugins/vault-plugin-secrets-keycloak
 
