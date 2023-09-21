@@ -73,7 +73,7 @@ Now, the plugin can be used in Vault.
 
 ### Dev Usage
 
-NOTE: you can find all vault curls in `Vault-Plugins.postman_collection.json` postman collection.
+NOTE: you can find all vault curls in [postman collection](Vault-Plugins.postman_collection.json) postman collection.
 
 #### Master Realm
 
